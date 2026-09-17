@@ -320,7 +320,7 @@ bool ScalarConverter::isPseudo(const std::string& input)
 
 }
 
-void ScalarConverter::converter(const std::string& input)
+void ScalarConverter::convert(const std::string& input)
 {
 	if (!validateInput(input))
 		return ;

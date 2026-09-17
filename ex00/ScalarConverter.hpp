@@ -55,7 +55,7 @@ class ScalarConverter {
 		static bool isIntegral(float f);
 
 	public:
-		static void converter(const std::string& input);
+		static void convert(const std::string& input);
 		
 
 };

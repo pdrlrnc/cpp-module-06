@@ -12,5 +12,5 @@ int main(int argc, char **argv)
 		std::cout << "Error: too few args" << std::endl;
 		return 1;
 	}
-	ScalarConverter::converter(argv[1]);
+	ScalarConverter::convert(argv[1]);
 }
