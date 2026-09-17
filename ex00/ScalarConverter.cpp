@@ -111,13 +111,188 @@ bool ScalarConverter::isInt(const std::string& input)
 	return true;
 }
 
+bool ScalarConverter::checkOverflow(const std::string& input)
+{
+	char *end = NULL;
+	double val = std::strtod(input.c_str(), &end);
+
+	//double is way bigger than int and float so if it overflows, everything is "overflown" 
+	if (errno == ERANGE)
+	{
+		printOverflow();
+		return true;
+	}
+	//next in size is float
+	else if (val > FLT_MAX || val < FLT_MIN)
+	{
+		printCharOverflow();
+		printIntOverflow();
+		printFloatOverflow();
+		printDouble(val);
+		return true;
+	}
+	//finally, int
+	else if (val > INT_MAX || val < INT_MIN)
+	{
+		printCharOverflow();
+		printIntOverflow();
+		printFloat(static_cast<float>(val));
+		printDouble(val);
+		return true;
+	}
+	//no overflow yayy
+	return false;
+}
+
+void ScalarConverter::printOverflow()
+{
+	printCharOverflow();
+	printIntOverflow();
+	printFloatOverflow();
+	printDoubleOverflow();
+}
+
+void ScalarConverter::printCharOverflow()
+{
+	std::cout << "char: impossible" << std::endl;
+}
+
+
+void ScalarConverter::printIntOverflow()
+{
+	std::cout << "int: impossible" << std::endl;
+}
+
+void ScalarConverter::printFloatOverflow()
+{
+	std::cout << "float: impossible" << std::endl;
+}
+
+
+void ScalarConverter::printDoubleOverflow()
+{
+	std::cout << "double: impossible" << std::endl;
+}
+
+void ScalarConverter::printChar(const std::string& input)
+{
+	char c = input[0];
+	int i = static_cast<int>(c);
+	float f = static_cast<float>(c);
+	double d = static_cast<double>(c);
+
+	std::cout << "'" << c << "'" << std::endl;
+	printInt(i);
+	printFloat(f);
+	printDouble(d);
+}
+
+void ScalarConverter::printChar(int c)
+{
+	std::cout << "char: ";
+
+	if (c < 0 || c > 127)
+		std::cout << "impossible";
+	else if ((c >= 0 && c <= 31) || c == 127)
+		std::cout << "Non displayable";
+	else
+		std::cout << "'" << static_cast<char>(c) << "'";
+	std::cout << std::endl;
+}
+
+void ScalarConverter::printInt(const std::string& input)
+{
+	int i = std::atoi(input.c_str());
+	float f = static_cast<float>(i);
+	double d = static_cast<double>(i);
+
+	printChar(i);
+	printInt(i);
+	printFloat(f);
+	printDouble(d);
+}
+
+void ScalarConverter::printInt(int i)
+{
+	std::cout << "int: " << i << std::endl;
+}
+
+void ScalarConverter::printFloat(const std::string& input)
+{
+	char *end = NULL;
+	double val = std::strtod(input.c_str(), &end);
+
+	float f = static_cast<float>(val);
+	int i = static_cast<int>(f);
+	double d = static_cast<double>(f);
+
+	printChar(i);
+	printInt(i);
+	printFloat(f);
+	printDouble(d);
+}
+
+void ScalarConverter::printFloat(float f)
+{
+	std::cout << "float: " << f;
+	if (isIntegral(f))
+		std::cout << ".0";
+	std::cout << "f" << std::endl;
+}
+
+void ScalarConverter::printDouble(const std::string& input)
+{
+	char *end = NULL;
+	double val = std::strtod(input.c_str(), &end);
+
+	double d = val;
+	int i = static_cast<int>(d);
+	float f = static_cast<float>(d);
+
+	printChar(i);
+	printInt(i);
+	printFloat(f);
+	printDouble(d);
+}
+
+void ScalarConverter::printDouble(double d)
+{
+	std::cout << "double: " << d;
+	if (isIntegral(d))
+		std::cout << ".0";
+	std::cout << std::endl;
+}
+
+bool ScalarConverter::isIntegral(double d) {
+    double intPart;
+    double fracPart = std::modf(d, &intPart);
+    return fracPart == 0.0;
+}
+
+bool ScalarConverter::isIntegral(float f) {
+    float intPart;
+    float fracPart = std::modf(f, &intPart);
+    return fracPart == 0.0f;
+}
+
 void ScalarConverter::converter(const std::string& input)
 {
 	if (!validateInput(input))
 		return ;
 
-	std::cout << "|" << input << "|" << " " << "is " << (isChar(input) ? "" : "not ") << "a char" << std::endl;	
-	std::cout << "|" << input << "|" << " " << "is " << (isFloat(input) ? "" : "not ") << "a float" << std::endl;	
-	std::cout << "|" << input << "|" << " " << "is " << (isDouble(input) ? "" : "not ") << "a double" << std::endl;	
-	std::cout << "|" << input << "|" << " " << "is " << (isInt(input) ? "" : "not ") << "a int" << std::endl;	
+	if (isChar(input))
+	{
+		printChar(input);
+		return ;
+	}
+	
+	if (checkOverflow(input))
+		return ;
+
+	if (isInt(input))
+		printInt(input);
+	if (isFloat(input))
+		printFloat(input);
+	if (isDouble(input))
+		printDouble(input);
 }
