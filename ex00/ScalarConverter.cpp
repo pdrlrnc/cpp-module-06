@@ -123,7 +123,7 @@ bool ScalarConverter::checkOverflow(const std::string& input)
 		return true;
 	}
 	//next in size is float
-	else if (val > FLT_MAX || val < FLT_MIN)
+	else if (val > FLT_MAX || val < -FLT_MAX)
 	{
 		printCharOverflow();
 		printIntOverflow();
@@ -263,21 +263,53 @@ void ScalarConverter::printDouble(double d)
 	std::cout << std::endl;
 }
 
-bool ScalarConverter::isIntegral(double d) {
+bool ScalarConverter::isIntegral(double d)
+{
     double intPart;
     double fracPart = std::modf(d, &intPart);
     return fracPart == 0.0;
 }
 
-bool ScalarConverter::isIntegral(float f) {
+bool ScalarConverter::isIntegral(float f)
+{
     float intPart;
     float fracPart = std::modf(f, &intPart);
     return fracPart == 0.0f;
 }
 
+bool ScalarConverter::isPseudo(const std::string& input)
+{
+	if (input == "-inff" || input == "+inff")
+	{
+		std::cout << "char: impossible" << std::endl << "int: impossible" << std::endl;
+		std::cout << "float: " << input << std::endl;
+		std::cout << "double: " << input[0] << "inf" << std::endl;
+		return true;
+	}
+	if (input == "-inf" || input == "+inf")
+	{
+		std::cout << "char: impossible" << std::endl << "int: impossible" << std::endl;
+		std::cout << "float: " << input << "f" << std::endl;
+		std::cout << "double: " << input << std::endl;
+		return true;
+	}
+	if (input == "nan" || input == "nanf")
+	{
+		std::cout << "char: impossible" << std::endl << "int: impossible" << std::endl;
+		std::cout << "float: " << "nanf" << std::endl;
+		std::cout << "double: " << "nan" << std::endl;
+		return true;
+	}
+	return false;
+
+}
+
 void ScalarConverter::converter(const std::string& input)
 {
 	if (!validateInput(input))
+		return ;
+
+	if (isPseudo(input))
 		return ;
 
 	if (isChar(input))
@@ -288,11 +320,12 @@ void ScalarConverter::converter(const std::string& input)
 	
 	if (checkOverflow(input))
 		return ;
-
-	if (isInt(input))
+	else if (isInt(input))
 		printInt(input);
-	if (isFloat(input))
+	else if (isFloat(input))
 		printFloat(input);
-	if (isDouble(input))
+	else if (isDouble(input))
 		printDouble(input);
+	else
+		std::cout << "Invalid/unknown primitive data type. Accepted types: char, int, float and double" << std::endl;
 }
