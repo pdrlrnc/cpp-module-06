@@ -44,7 +44,6 @@ bool ScalarConverter::isChar(const std::string& input)
 
 bool ScalarConverter::isFloat(const std::string& input)
 {
-
 	std::string::size_type i = input.length();
 
 	//at least 3 characters, the "simplest" valid float is 1.f, 3 chars long
@@ -202,6 +201,9 @@ void ScalarConverter::printChar(int c)
 
 void ScalarConverter::printInt(const std::string& input)
 {
+	if (checkOverflow(input))
+		return ;
+
 	int i = std::atoi(input.c_str());
 	float f = static_cast<float>(i);
 	double d = static_cast<double>(i);
@@ -219,6 +221,9 @@ void ScalarConverter::printInt(int i)
 
 void ScalarConverter::printFloat(const std::string& input)
 {
+	if (checkOverflow(input))
+		return ;
+
 	char *end = NULL;
 	double val = std::strtod(input.c_str(), &end);
 
@@ -242,6 +247,9 @@ void ScalarConverter::printFloat(float f)
 
 void ScalarConverter::printDouble(const std::string& input)
 {
+	if (checkOverflow(input))
+		return ;
+
 	char *end = NULL;
 	double val = std::strtod(input.c_str(), &end);
 
@@ -293,6 +301,14 @@ bool ScalarConverter::isPseudo(const std::string& input)
 		std::cout << "double: " << input << std::endl;
 		return true;
 	}
+	if (input == "inf" || input == "inff")
+	{
+	
+		std::cout << "char: impossible" << std::endl << "int: impossible" << std::endl;
+		std::cout << "float: inff" << std::endl;
+		std::cout << "double: inf" << std::endl;
+		return true;
+	}
 	if (input == "nan" || input == "nanf")
 	{
 		std::cout << "char: impossible" << std::endl << "int: impossible" << std::endl;
@@ -313,13 +329,7 @@ void ScalarConverter::converter(const std::string& input)
 		return ;
 
 	if (isChar(input))
-	{
 		printChar(input);
-		return ;
-	}
-	
-	if (checkOverflow(input))
-		return ;
 	else if (isInt(input))
 		printInt(input);
 	else if (isFloat(input))
