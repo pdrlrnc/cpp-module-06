@@ -15,29 +15,7 @@ ScalarConverter& ScalarConverter::operator=(const ScalarConverter& other)
 	return *this;
 }
 
-//check before delivery: can i use those amazing functions? i am leaning to no but lets discuss it
-std::string ScalarConverter::trim(const std::string& input)
-{
-	// size_type is just a typedef for an unsigned interger type (in practice almost always size_t)
-	// std::string uses it for lengths, indices and positions
-	std::string::size_type start = input.find_first_not_of(" \t\n\r\f\v");
-
-	// npos is a special constant defined as static const size_type npos = -1
-	// it is used by find_first_not_of and other methods as a sentinel for not found
-	if (start == std::string::npos) return "";
-
-	std::string::size_type end = input.find_last_not_of(" \t\n\r\f\v");
-	return input.substr(start, end - start + 1);
-}
-
-std::string ScalarConverter::convertToChar(std::string input)
-{
-	if (input == "")
-		return "impossible";
-	return "possible";
-}
-
-bool ScalarConverter::validateInput(std::string& input)
+bool ScalarConverter::validateInput(const std::string& input)
 {
 	if (input.empty())
 	{
@@ -57,20 +35,20 @@ bool ScalarConverter::validateInput(std::string& input)
 	return true;
 }
 
-bool ScalarConverter::isChar(std::string& input)
+bool ScalarConverter::isChar(const std::string& input)
 {
 	if (input.length() == 1 && !isdigit(input[0]))
 		return true;
 	return false;
 }
 
-bool ScalarConverter::isFloat(std::string& input)
+bool ScalarConverter::isFloat(const std::string& input)
 {
 
 	std::string::size_type i = input.length();
 
-	//at least 4 characters, the "simplest" valid float is 1.0f, 4 chars long
-	if (i < 4)
+	//at least 3 characters, the "simplest" valid float is 1.f, 3 chars long
+	if (i < 3)
 		return false;
 
 	//last char has to be a 'f'
@@ -78,47 +56,52 @@ bool ScalarConverter::isFloat(std::string& input)
 	if (input[i] != 'f')
 		return false;
 
-	//after the 'f', we require at least one digit, then followed by a '.'
+	//after the 'f', we can have - or not - digits, then followed by a '.'
 	i--;
-	while (isdigit(input[i]) && i > 0)
+	while (i != 0 && isdigit(input[i]))
 		i--;
-	if (input[i] != '.' || (i == input.length() - 2))
+	if (i == 0 || input[i] != '.')
 		return false;
 	
-	//after the '.' every char must be a digit
+	//after the '.' every char must be a digit, except the first one that can be either + or -
 	i--;	
-	while (isdigit(input[i]) && i > 0)
+	while (i != 0 && isdigit(input[i]))
 		i--;
-	return (i == 0);
+	return (i == 0 && (isdigit(input[0]) || input[0] == '+' || input[0] == '-'));
 }
 
-bool ScalarConverter::isDouble(std::string& input)
+bool ScalarConverter::isDouble(const std::string& input)
 {
-
 	std::string::size_type i = input.length();
 
-	//at least 3 characters, the "simplest" valid double is 1.0, 3 chars long
-	if (i < 3)
+	//at least 2 characters, the "simplest" valid double is 1., 2 chars long
+	if (i < 2)
 		return false;
 
-	//we require at least one digit, then followed by a '.'
+	//there can be or not be digits, then followed by a '.'
 	i--;
-	while (isdigit(input[i]) && i > 0)
+	while (i != 0 && isdigit(input[i]))
 		i--;
-	if (input[i] != '.' || (i == input.length() - 1))
+	if (i == 0 || input[i] != '.')
 		return false;
 	
-	//after the '.' every char must be a digit
+	//after the '.' every char must be a digit or + or - for the first char
 	i--;	
-	while (isdigit(input[i]) && i > 0)
+	while (i != 0 && isdigit(input[i]))
 		i--;
-	return (i == 0);
+	return (i == 0 && (isdigit(input[0]) || input[0] == '+' || input[0] == '-'));
 }
 
-bool ScalarConverter::isInt(std::string& input)
+bool ScalarConverter::isInt(const std::string& input)
 {
-	std::string::size_type i = 0;
+	std::string::size_type i = 1;
 
+	//can start with + or -, can't be just + or -
+	if (!isdigit(input[0]) && input[0] != '-' && input[0] != '+')
+		return false;
+	if ((input[0] == '-' || input[0] == '+') && input.length() == 1)
+		return false;
+	
 	while (i < input.length())
 	{
 		if (!isdigit(input[i]))
@@ -130,13 +113,11 @@ bool ScalarConverter::isInt(std::string& input)
 
 void ScalarConverter::converter(const std::string& input)
 {
-	std::string trimedInput = trim(input);
-
-	if (!validateInput(trimedInput))
+	if (!validateInput(input))
 		return ;
 
-	std::cout << "|" << input << "|" << " " << "is " << (isChar(trimedInput) ? "" : "not ") << "a char" << std::endl;	
-	std::cout << "|" << input << "|" << " " << "is " << (isFloat(trimedInput) ? "" : "not ") << "a float" << std::endl;	
-	std::cout << "|" << input << "|" << " " << "is " << (isDouble(trimedInput) ? "" : "not ") << "a double" << std::endl;	
-	std::cout << "|" << input << "|" << " " << "is " << (isInt(trimedInput) ? "" : "not ") << "a int" << std::endl;	
+	std::cout << "|" << input << "|" << " " << "is " << (isChar(input) ? "" : "not ") << "a char" << std::endl;	
+	std::cout << "|" << input << "|" << " " << "is " << (isFloat(input) ? "" : "not ") << "a float" << std::endl;	
+	std::cout << "|" << input << "|" << " " << "is " << (isDouble(input) ? "" : "not ") << "a double" << std::endl;	
+	std::cout << "|" << input << "|" << " " << "is " << (isInt(input) ? "" : "not ") << "a int" << std::endl;	
 }

@@ -18,13 +18,11 @@ class ScalarConverter {
 		ScalarConverter& operator=(const ScalarConverter& other);
 
 		//helpers
-		static std::string trim(const std::string& input);
-		static std::string convertToChar(std::string input);
-		static bool validateInput(std::string& input);
-		static bool isChar(std::string& input);
-		static bool isFloat(std::string& input);
-		static bool isDouble(std::string& input);
-		static bool isInt(std::string& input);
+		static bool validateInput(const std::string& input);
+		static bool isChar(const std::string& input);
+		static bool isFloat(const std::string& input);
+		static bool isDouble(const std::string& input);
+		static bool isInt(const std::string& input);
 	
 	public:
 		static void converter(const std::string& input);
