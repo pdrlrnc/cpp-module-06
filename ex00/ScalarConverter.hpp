@@ -54,6 +54,7 @@ class ScalarConverter {
 		static bool isIntegral(double d);
 		static bool isIntegral(float f);
 
+		static int getPrecision(double d);
 	public:
 		static void convert(const std::string& input);
 		

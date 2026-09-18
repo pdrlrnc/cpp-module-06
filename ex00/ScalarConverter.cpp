@@ -239,10 +239,37 @@ void ScalarConverter::printFloat(const std::string& input)
 
 void ScalarConverter::printFloat(float f)
 {
-	std::cout << "float: " << f;
 	if (isIntegral(f))
-		std::cout << ".0";
+		std::cout << std::setprecision(1);
+	else
+		std::cout << std::setprecision(getPrecision(f));
+
+	std::cout << std::fixed << "float: " << f;
 	std::cout << "f" << std::endl;
+}
+
+int ScalarConverter::getPrecision(double d)
+{
+	double intPart;
+	double fracPart = std::modf(d, &intPart);
+	int i = 0;
+
+	while (i < 6)
+	{
+		fracPart *= 10;
+		i++;
+	}
+
+	int intIntPart = static_cast<int>(fracPart);
+	i = 0;
+	while (i < 6)
+	{
+		if (intIntPart % 10 != 0)
+			return 6 - i;
+		intIntPart /= 10;
+		i++;
+	}
+	return 0;
 }
 
 void ScalarConverter::printDouble(const std::string& input)
@@ -265,9 +292,12 @@ void ScalarConverter::printDouble(const std::string& input)
 
 void ScalarConverter::printDouble(double d)
 {
-	std::cout << "double: " << d;
+	std::cout << std::fixed;
 	if (isIntegral(d))
-		std::cout << ".0";
+		std::cout << std::setprecision(1);
+	else
+		std::cout << std::setprecision(getPrecision(d));
+	std::cout << "double: " << d;
 	std::cout << std::endl;
 }
 
