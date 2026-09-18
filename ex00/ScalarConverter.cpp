@@ -112,11 +112,11 @@ bool ScalarConverter::isInt(const std::string& input)
 
 bool ScalarConverter::checkOverflow(const std::string& input)
 {
+	errno = 0;
 	char *end = NULL;
 	double val = std::strtod(input.c_str(), &end);
 
-	//double is way bigger than int and float so if it overflows, everything is "overflown" 
-	if (errno == ERANGE)
+	if (errno == ERANGE && (val == HUGE_VAL || val == -HUGE_VAL))
 	{
 		printOverflow();
 		return true;
@@ -251,7 +251,7 @@ void ScalarConverter::printFloat(float f)
 int ScalarConverter::getPrecision(double d)
 {
 	double intPart;
-	double fracPart = std::modf(d, &intPart);
+	double fracPart = std::fabs(std::modf(d, &intPart));
 	int i = 0;
 
 	while (i < 6)
@@ -260,7 +260,9 @@ int ScalarConverter::getPrecision(double d)
 		i++;
 	}
 
-	int intIntPart = static_cast<int>(fracPart);
+	int intIntPart = static_cast<int>(fracPart + 0.5);
+	if (intIntPart >= 1000000)
+		intIntPart = 999999;
 	i = 0;
 	while (i < 6)
 	{
