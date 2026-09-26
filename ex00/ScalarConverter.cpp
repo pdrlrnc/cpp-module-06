@@ -26,7 +26,7 @@ bool ScalarConverter::validateInput(const std::string& input)
 	
 	for (std::string::size_type i = 0; i < input.length(); i++)
 	{
-		if (!std::isprint(input[i]))
+		if (!std::isprint(static_cast<unsigned char>(input[i])))
 		{
 			std::cout << "Error: input has invalid characters" << std::endl; 
 			return false;
@@ -181,7 +181,11 @@ void ScalarConverter::printDoubleOverflow()
 
 void ScalarConverter::printChar(const std::string& input)
 {
-	char c = input[0];
+	int k = 0;
+	if (input.length() == 3)
+		k = 1;
+
+	char c = static_cast<unsigned char>(input[k]);
 	int i = static_cast<int>(c);
 	float f = static_cast<float>(c);
 	double d = static_cast<double>(c);
@@ -234,11 +238,19 @@ void ScalarConverter::printFloat(const std::string& input)
 	double val = std::strtod(input.c_str(), &end);
 
 	float f = static_cast<float>(val);
-	int i = static_cast<int>(f);
 	double d = static_cast<double>(f);
 
-	printChar(i);
-	printInt(i);
+	if (f >= 2147483648.0f || f < -2147483648.0f)
+	{
+		printCharOverflow();
+		printIntOverflow();
+	}
+	else
+	{
+		int i = static_cast<int>(f);
+		printChar(i);
+		printInt(i);
+	}
 	printFloat(f);
 	printDouble(d);
 }
@@ -252,34 +264,6 @@ void ScalarConverter::printFloat(float f)
 
 	std::cout << std::fixed << "float: " << f;
 	std::cout << "f" << std::endl;
-}
-
-int ScalarConverter::getPrecision(float f)
-{
-	double intPart;
-	double fracPart = std::fabs(std::modf(f, &intPart));
-	int i = 0;
-
-	while (i < 6)
-	{
-		fracPart *= 10;
-		i++;
-	}
-
-	int intIntPart = static_cast<int>(fracPart + 0.5);
-	if (intIntPart == 1000000)
-		return 1;
-	if (intIntPart > 1000000)
-		intIntPart = 999999;
-	i = 0;
-	while (i < 6)
-	{
-		if (intIntPart % 10 != 0)
-			return 6 - i;
-		intIntPart /= 10;
-		i++;
-	}
-	return 1;
 }
 
 int ScalarConverter::getPrecision(double d)
@@ -300,10 +284,10 @@ int ScalarConverter::getPrecision(double d)
 	if (intIntPart > 1000000)
 		intIntPart = 999999;
 	i = 0;
-	while (i < 15)
+	while (i < 6)
 	{
 		if (intIntPart % 10 != 0)
-			return 15 - i;
+			return 6 - i;
 		intIntPart /= 10;
 		i++;
 	}

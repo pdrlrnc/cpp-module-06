@@ -36,18 +36,14 @@ int randomIndex(void)
 
 void identify(Base* p)
 {
-	A* a = dynamic_cast<A*>(p);
-	B* b = dynamic_cast<B*>(p);
-	C* c = dynamic_cast<C*>(p);
-
-	if (a)
+	if (dynamic_cast<A*>(p))
 		std::cout << "Type: A" << std::endl;
-
-	if (b)
+	else if (dynamic_cast<B*>(p))
 		std::cout << "Type: B" << std::endl;
-
-	if (c)
+	else if (dynamic_cast<C*>(p))
 		std::cout << "Type: C" << std::endl;
+	else
+		std::cout << "Unknown type" << std::endl;
 }
 
 void identify(Base& p)
