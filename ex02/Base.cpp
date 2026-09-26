@@ -37,3 +37,27 @@ int random(void)
 	delete c;
 	return i % 3;
 }
+
+void identify(Base* p)
+{
+	A* a = dynamic_cast<A*>(p);
+	B* b = dynamic_cast<B*>(p);
+	C* c = dynamic_cast<C*>(p);
+
+	if (a)
+		std::cout << "Type: A" << std::endl;
+
+	if (b)
+		std::cout << "Type: B" << std::endl;
+
+	if (c)
+		std::cout << "Type: C" << std::endl;
+}
+
+void identify(Base& p)
+{
+	Base *pPtr = &p;
+	identify(pPtr);
+}
+
+

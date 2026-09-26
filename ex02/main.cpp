@@ -16,5 +16,13 @@ int main(void)
 {
 	Base* abc = generate();
 
-	(void)abc;
+	identify(abc);
+
+	delete abc;
+
+	abc = generate();
+
+	identify(*abc);
+
+	delete abc;
 }
