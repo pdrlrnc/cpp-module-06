@@ -39,12 +39,15 @@ bool ScalarConverter::isChar(const std::string& input)
 {
 	if (input.length() == 1 && !isdigit(input[0]))
 		return true;
+	if (input.length() == 3 && input[0] == '\'' && input[2] == '\'')
+		return true;
 	return false;
 }
 
 bool ScalarConverter::isFloat(const std::string& input)
 {
 	std::string::size_type i = input.length();
+	std::string::size_type k;
 
 	//at least 3 characters, the "simplest" valid float is 1.f, 3 chars long
 	if (i < 3)
@@ -63,15 +66,17 @@ bool ScalarConverter::isFloat(const std::string& input)
 		return false;
 	
 	//after the '.' every char must be a digit, except the first one that can be either + or -
-	i--;	
+	i--;
+	k = i;
 	while (i != 0 && isdigit(input[i]))
 		i--;
-	return (i == 0 && (isdigit(input[0]) || input[0] == '+' || input[0] == '-'));
+	return (i == 0 && (isdigit(input[0]) || (k != i && (input[0] == '+' || input[0] == '-'))));
 }
 
 bool ScalarConverter::isDouble(const std::string& input)
 {
 	std::string::size_type i = input.length();
+	std::string::size_type k;
 
 	//at least 2 characters, the "simplest" valid double is 1., 2 chars long
 	if (i < 2)
@@ -85,10 +90,11 @@ bool ScalarConverter::isDouble(const std::string& input)
 		return false;
 	
 	//after the '.' every char must be a digit or + or - for the first char
-	i--;	
+	i--;
+	k = i;
 	while (i != 0 && isdigit(input[i]))
 		i--;
-	return (i == 0 && (isdigit(input[0]) || input[0] == '+' || input[0] == '-'));
+	return (i == 0 && (isdigit(input[0]) || (k != i && (input[0] == '+' || input[0] == '-'))));
 }
 
 bool ScalarConverter::isInt(const std::string& input)
@@ -180,7 +186,7 @@ void ScalarConverter::printChar(const std::string& input)
 	float f = static_cast<float>(c);
 	double d = static_cast<double>(c);
 
-	std::cout << "'" << c << "'" << std::endl;
+	std::cout << "char: '" << c << "'" << std::endl;
 	printInt(i);
 	printFloat(f);
 	printDouble(d);
@@ -248,6 +254,34 @@ void ScalarConverter::printFloat(float f)
 	std::cout << "f" << std::endl;
 }
 
+int ScalarConverter::getPrecision(float f)
+{
+	double intPart;
+	double fracPart = std::fabs(std::modf(f, &intPart));
+	int i = 0;
+
+	while (i < 6)
+	{
+		fracPart *= 10;
+		i++;
+	}
+
+	int intIntPart = static_cast<int>(fracPart + 0.5);
+	if (intIntPart == 1000000)
+		return 1;
+	if (intIntPart > 1000000)
+		intIntPart = 999999;
+	i = 0;
+	while (i < 6)
+	{
+		if (intIntPart % 10 != 0)
+			return 6 - i;
+		intIntPart /= 10;
+		i++;
+	}
+	return 1;
+}
+
 int ScalarConverter::getPrecision(double d)
 {
 	double intPart;
@@ -261,17 +295,19 @@ int ScalarConverter::getPrecision(double d)
 	}
 
 	int intIntPart = static_cast<int>(fracPart + 0.5);
-	if (intIntPart >= 1000000)
+	if (intIntPart == 1000000)
+		return 1;
+	if (intIntPart > 1000000)
 		intIntPart = 999999;
 	i = 0;
-	while (i < 6)
+	while (i < 15)
 	{
 		if (intIntPart % 10 != 0)
-			return 6 - i;
+			return 15 - i;
 		intIntPart /= 10;
 		i++;
 	}
-	return 0;
+	return 1;
 }
 
 void ScalarConverter::printDouble(const std::string& input)
