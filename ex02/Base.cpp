@@ -1,32 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Data.cpp                                           :+:      :+:    :+:   */
+/*   Base.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pedde-so <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/19 12:34:50 by pedde-so          #+#    #+#             */
-/*   Updated: 2026/09/19 12:34:53 by pedde-so         ###   ########.fr       */
+/*   Created: 2026/09/19 15:19:14 by pedde-so          #+#    #+#             */
+/*   Updated: 2026/09/19 15:19:15 by pedde-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Data.hpp"
+#include "Base.hpp"
 
-Data::Data(): _data("no data") {};
+Base::~Base() {}
 
-Data::~Data() {};
-
-Data::Data(const Data& other): _data(other._data) {}
-
-Data& Data::operator=(const Data& other)
+Base* generate(void)
 {
-	_data = other._data;
-	return *this;
+	Base *b;
+
+	int r = random();
+	if (r == 0)
+		b = new A();
+	else if (r == 1)
+		b = new B();
+	else 
+		b = new C();
+
+	return b;
 }
 
-Data::Data(const std::string& data): _data(data) {}
-
-std::string Data::getData()
+int random(void)
 {
-	return _data;
+	char *c = new char;
+	int i = *(int *)&c;
+
+	delete c;
+	return i % 3;
 }

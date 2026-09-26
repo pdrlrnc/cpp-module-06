@@ -1,32 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Data.cpp                                           :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pedde-so <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/19 12:34:50 by pedde-so          #+#    #+#             */
-/*   Updated: 2026/09/19 12:34:53 by pedde-so         ###   ########.fr       */
+/*   Created: 2026/09/19 15:30:58 by pedde-so          #+#    #+#             */
+/*   Updated: 2026/09/19 15:30:59 by pedde-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Data.hpp"
+#include "Base.hpp"
 
-Data::Data(): _data("no data") {};
-
-Data::~Data() {};
-
-Data::Data(const Data& other): _data(other._data) {}
-
-Data& Data::operator=(const Data& other)
+int main(void)
 {
-	_data = other._data;
-	return *this;
-}
+	Base* abc = generate();
 
-Data::Data(const std::string& data): _data(data) {}
-
-std::string Data::getData()
-{
-	return _data;
+	(void)abc;
 }

@@ -30,4 +30,7 @@ int main(void)
 
 	std::cout << "Deserialization, userialized_data_ptr value: |" << unserializedDataPtr->getData() << "|" << std::endl;
 
+	std::cout << (dataPtr == unserializedDataPtr ? "OK: pointers match" : "KO: pointers differ") << std::endl;
+
+	delete dataPtr;
 }
