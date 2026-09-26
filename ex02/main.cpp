@@ -11,9 +11,13 @@
 /* ************************************************************************** */
 
 #include "Base.hpp"
+#include <cstdlib>
+#include <ctime>
 
 int main(void)
 {
+	std::srand(std::time(NULL));
+
 	Base* abc = generate();
 
 	identify(abc);

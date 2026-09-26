@@ -18,7 +18,7 @@ Base* generate(void)
 {
 	Base *b;
 
-	int r = random();
+	int r = randomIndex();
 	if (r == 0)
 		b = new A();
 	else if (r == 1)
@@ -29,13 +29,9 @@ Base* generate(void)
 	return b;
 }
 
-int random(void)
+int randomIndex(void)
 {
-	char *c = new char;
-	int i = *(int *)&c;
-
-	delete c;
-	return i % 3;
+	return std::rand() % 3;
 }
 
 void identify(Base* p)
@@ -56,8 +52,23 @@ void identify(Base* p)
 
 void identify(Base& p)
 {
-	Base *pPtr = &p;
-	identify(pPtr);
+    try { 
+	    (void)dynamic_cast<A&>(p);
+	    std::cout << "A" << std::endl;
+	    return ;
+    } catch (...) {}
+
+    try {
+	    (void)dynamic_cast<B&>(p);
+	    std::cout << "B" << std::endl;
+	    return ;
+    } catch (...) {}
+    
+    try {
+	    (void)dynamic_cast<C&>(p);
+	    std::cout << "C" << std::endl;
+	    return;
+    } catch (...) {}
+
+    std::cout << "Unknown type" << std::endl;
 }
-
-
