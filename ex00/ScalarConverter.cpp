@@ -352,8 +352,6 @@ bool ScalarConverter::isPseudo(const std::string& input)
 	std::string core = input;
 	if (body.size() == 4)
 		core.erase(core.size() - 1);
-	double d;
-	double f;
 
 	double d = static_cast<double>(std::strtod(core.c_str(), NULL));
 	float  f = static_cast<float>(d);

@@ -51,6 +51,7 @@ fclean: clean
 	@$(RM) $(NAME)
 	@$(RM) tags
 
-re: fclean all
+re: fclean
+	@$(MAKE) --no-print-directory all
 
 .PHONY: all clean fclean re
