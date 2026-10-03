@@ -339,37 +339,34 @@ bool ScalarConverter::isIntegral(float f)
 
 bool ScalarConverter::isPseudo(const std::string& input)
 {
-	if (input == "-inff" || input == "+inff")
-	{
-		std::cout << "char: impossible" << std::endl << "int: impossible" << std::endl;
-		std::cout << "float: " << input << std::endl;
-		std::cout << "double: " << input[0] << "inf" << std::endl;
-		return true;
-	}
-	if (input == "-inf" || input == "+inf")
-	{
-		std::cout << "char: impossible" << std::endl << "int: impossible" << std::endl;
-		std::cout << "float: " << input << "f" << std::endl;
-		std::cout << "double: " << input << std::endl;
-		return true;
-	}
-	if (input == "inf" || input == "inff")
-	{
-	
-		std::cout << "char: impossible" << std::endl << "int: impossible" << std::endl;
-		std::cout << "float: inff" << std::endl;
-		std::cout << "double: inf" << std::endl;
-		return true;
-	}
-	if (input == "nan" || input == "nanf")
-	{
-		std::cout << "char: impossible" << std::endl << "int: impossible" << std::endl;
-		std::cout << "float: " << "nanf" << std::endl;
-		std::cout << "double: " << "nan" << std::endl;
-		return true;
-	}
-	return false;
+	if (input != "nan" && input != "nanf"
+		&& input != "inf" && input != "inff"
+		&& input != "+inf" && input != "+inff"
+		&& input != "-inf" && input != "-inff")
+		return false;
 
+	std::string body = input;
+	if (body[0] == '+' || body[0] == '-')
+		body.erase(0, 1);
+
+	std::string core = input;
+	if (body.size() == 4)
+		core.erase(core.size() - 1);
+	double d;
+	double f;
+
+	double d = static_cast<double>(std::strtod(core.c_str(), NULL));
+	float  f = static_cast<float>(d);
+
+	std::cout << "char: impossible" << std::endl;
+	std::cout << "int: impossible" << std::endl;
+
+	if (input[0] == '+')
+		std::cout << std::showpos;
+	std::cout << "float: " << f << "f" << std::endl;
+	std::cout << "double: " << d << std::endl;
+	std::cout << std::noshowpos;
+	return true;
 }
 
 void ScalarConverter::convert(const std::string& input)
